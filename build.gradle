@@ -1,0 +1,7 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// This file should generally be very minimal when using settings.gradle for repository management.
+
+plugins {
+    id 'com.android.application' version '7.4.2' apply false //  Use a more recent version if available
+}
+

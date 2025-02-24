@@ -1,0 +1,15 @@
+# Gradle files
+.gradle/
+build/
+/*/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration files
+local.properties
+
+# Android Studio files (not needed in Termux)
+.idea/
+*.iml
+
+# APK files
+*.apk
