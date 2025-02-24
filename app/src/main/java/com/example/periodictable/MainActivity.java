@@ -195,30 +195,32 @@ public class MainActivity extends Activity {
     }
 
     public void onElementClick(View view) {
-        String symbol = (String) view.getTag();
-        if (symbol != null) {
-            if (selectedElements.containsKey(symbol)) {
-                // Ctrl-click to decrement
-                if (view.isPressed() && (view.getContext().getResources().getConfiguration().keyboard != 0)) { // Check for Ctrl key (simplified)
-                    int count = selectedElements.get(symbol);
-                    if (count > 1) {
-                        selectedElements.put(symbol, count - 1);
-                    } else {
-                        selectedElements.remove(symbol);
-                    }
+    String symbol = (String) view.getTag();
+    if (symbol != null) {
+        if (selectedElements.containsKey(symbol)) {
+            // Element is already selected
+            if (view.isPressed() && (view.getContext().getResources().getConfiguration().keyboard != 0)) {
+                // Ctrl-click: Decrement
+                int count = selectedElements.get(symbol);
+                if (count > 1) {
+                    selectedElements.put(symbol, count - 1);
                 } else {
-                    // Normal click: Increment count
-                    selectedElements.put(symbol, selectedElements.get(symbol) + 1);
+                    selectedElements.remove(symbol); // Remove if count becomes 0
                 }
             } else {
-                // Add if not present
-                selectedElements.put(symbol, 1);
+                // Normal click: Increment
+                selectedElements.put(symbol, selectedElements.get(symbol) + 1);
             }
-            updateDisplay(); // Update the display after any change
         } else {
-            Toast.makeText(this, "No symbol!", Toast.LENGTH_SHORT).show();
+            // Element is NOT selected.  Add it.
+            selectedElements.put(symbol, 1);
         }
+        updateDisplay(); // Update the display in ALL cases
+    } else {
+        Toast.makeText(this, "No symbol!", Toast.LENGTH_SHORT).show();
     }
+}
+
 
 
     private void updateDisplay() {
