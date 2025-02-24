@@ -1,51 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Periodic Table Calculator"
-            android:textSize="24sp"
-            android:layout_marginBottom="16dp"/>
-
-         <ScrollView
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1">
-    <HorizontalScrollView
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="16dp">
+
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:text="Periodic Table Calculator"
+        android:textSize="24sp"
+        android:layout_marginBottom="16dp"/>
 
-        <GridLayout
-            android:id="@+id/periodicTableGrid"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <HorizontalScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </HorizontalScrollView>
-</ScrollView>
+            android:layout_height="wrap_content">
 
+            <GridLayout
+                android:id="@+id/periodicTableGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnWidth="50dp"
+                android:numColumns="32"/>
+        </HorizontalScrollView>
+    </ScrollView>
 
-        <TextView
-            android:id="@+id/selectedElementsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"/>
+    <TextView
+        android:id="@+id/selectedElementsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
 
-        <TextView
-            android:id="@+id/formulaTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/formulaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"/>
 
-        <TextView
-            android:id="@+id/totalWeightTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/totalWeightTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"/>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:layout_marginTop="16dp"/>
 
+</LinearLayout>
