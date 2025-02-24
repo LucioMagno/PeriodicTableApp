@@ -133,27 +133,29 @@ public class MainActivity extends Activity {
     String symbol = (String) view.getTag();
     if (symbol != null) {
         if (selectedElements.containsKey(symbol)) {
-            // Simulate Ctrl key press by checking if the button is still pressed
-            // This is a workaround, as detecting actual Ctrl key press on Android is tricky
-            if (view.isPressed()) { // Use isPressed directly
-                selectedElements.put(symbol, selectedElements.get(symbol) - 1);
-                if (selectedElements.get(symbol) <= 0) {
+            // Ctrl-click to decrement
+            if (view.isPressed() && (view.getContext().getResources().getConfiguration().keyboard != 0)) { //Check for ctrl
+                int count = selectedElements.get(symbol);
+                if (count > 1) {
+                    selectedElements.put(symbol, count - 1);
+                } else {
                     selectedElements.remove(symbol);
                     view.setBackgroundColor(0xFFFFFFFF); // Reset to default
                 }
-            } else {
-                selectedElements.put(symbol, selectedElements.get(symbol) + 1);
-                view.setBackgroundColor(0xFFAAFFAA);
+            } else { // Normal click - increment
+               selectedElements.put(symbol, selectedElements.get(symbol) + 1);
             }
         } else {
+            // Add if not present
             selectedElements.put(symbol, 1);
-            view.setBackgroundColor(0xFFAAFFAA);
+            view.setBackgroundColor(0xFFAAFFAA); // Lighter green
         }
         updateDisplay();
     } else {
         Toast.makeText(this, "No symbol!", Toast.LENGTH_SHORT).show();
     }
 }
+
 
 
     private void updateDisplay() {
