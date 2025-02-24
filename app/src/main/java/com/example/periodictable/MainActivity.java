@@ -19,10 +19,14 @@ public class MainActivity extends Activity {
     private TextView formulaTextView;
     private TextView totalWeightTextView;
     private TextView selectedElementsTextView;
-    private Button clearButton; // Keep the clearButton
+    private Button clearButton;
+    private Button addButton;
+    private Button removeButton;
+
 
     private final Map<String, Double> elementWeights = new HashMap<>();
     private final Map<String, Integer> selectedElements = new HashMap<>(); // Symbol -> Count
+    private String selectedSymbol = null; //Keep a reference for the selected element.
 
     // Periodic Table Data (Symbol, Weight, Row, Column)
     private final String[][] periodicTableData = {
@@ -117,7 +121,9 @@ public class MainActivity extends Activity {
         formulaTextView = findViewById(R.id.formulaTextView);
         totalWeightTextView = findViewById(R.id.totalWeightTextView);
         selectedElementsTextView = findViewById(R.id.selectedElementsTextView);
-        clearButton = findViewById(R.id.clearButton); // Get reference
+        clearButton = findViewById(R.id.clearButton);
+        addButton = findViewById(R.id.addButton);
+        removeButton = findViewById(R.id.removeButton);
 
 
         // Populate elementWeights map
@@ -133,6 +139,20 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 clearSelection();
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addElement();
+            }
+        });
+
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeElement();
             }
         });
     }
@@ -172,14 +192,13 @@ public class MainActivity extends Activity {
               elementButton.setText(String.format(Locale.US, "%s\n%.2f", symbol, weight));
               elementButton.setTag(symbol); // Store the symbol as a tag
 
-              //Use anonymous inner class instead of lambda.
-              elementButton.setOnClickListener(new View.OnClickListener() {
-                  @Override
-                  public void onClick(View view) {
-                      onElementClick(view);
-                  }
-              });
-
+            // Set click listener for element selection
+            elementButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    selectElement(symbol);
+                }
+            });
 
               GridLayout.LayoutParams params = new GridLayout.LayoutParams();
               params.rowSpec = GridLayout.spec(row); // Set row
@@ -193,49 +212,52 @@ public class MainActivity extends Activity {
 
           }
     }
+    private void selectElement(String symbol) {
+        selectedSymbol = symbol;
 
-    public void onElementClick(View view) {
-    String symbol = (String) view.getTag();
-    if (symbol != null) {
-        if (selectedElements.containsKey(symbol)) {
-            // Element is already selected
-            if (view.isPressed() && (view.getContext().getResources().getConfiguration().keyboard != 0)) {
-                // Ctrl-click: Decrement
-                int count = selectedElements.get(symbol);
-                if (count > 1) {
-                    selectedElements.put(symbol, count - 1);
+        // Update UI: Highlight selected element, reset others
+        for (int i = 0; i < periodicTableGrid.getChildCount(); i++) {
+            View child = periodicTableGrid.getChildAt(i);
+            if (child instanceof Button) {
+                if (symbol.equals(child.getTag())) {
+                    child.setBackgroundColor(0xFFAAFFAA); // Light green for selected
                 } else {
-                    selectedElements.remove(symbol); // Remove if count becomes 0
+                    child.setBackgroundColor(0xFFFFFFFF); // Default color
                 }
-            } else {
-                // Normal click: Increment
-                selectedElements.put(symbol, selectedElements.get(symbol) + 1);
+            }
+        }
+    }
+
+    private void addElement() {
+        if (selectedSymbol != null) {
+            selectedElements.put(selectedSymbol, selectedElements.getOrDefault(selectedSymbol, 0) + 1);
+            updateDisplay();
+        } else {
+            Toast.makeText(this, "Please select an element first", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void removeElement() {
+        if (selectedSymbol != null) {
+            if (selectedElements.containsKey(selectedSymbol)) {
+                int count = selectedElements.get(selectedSymbol);
+                if (count > 1) {
+                    selectedElements.put(selectedSymbol, count - 1);
+                } else {
+                    selectedElements.remove(selectedSymbol);
+                }
+                updateDisplay();
             }
         } else {
-            // Element is NOT selected.  Add it.
-            selectedElements.put(symbol, 1);
+            Toast.makeText(this, "Please select an element first", Toast.LENGTH_SHORT).show();
         }
-        updateDisplay(); // Update the display in ALL cases
-    } else {
-        Toast.makeText(this, "No symbol!", Toast.LENGTH_SHORT).show();
     }
-}
-
 
 
     private void updateDisplay() {
         StringBuilder formula = new StringBuilder();
         StringBuilder selectedElementsText = new StringBuilder();
         double totalWeight = 0;
-
-         // Reset background color of ALL buttons
-        for (int i = 0; i < periodicTableGrid.getChildCount(); i++) {
-            View child = periodicTableGrid.getChildAt(i);
-            if (child instanceof Button) {
-                child.setBackgroundColor(0xFFFFFFFF); // Default (white or your theme's default)
-            }
-        }
-
 
         for (Map.Entry<String, Integer> entry : selectedElements.entrySet()) {
             String symbol = entry.getKey();
@@ -246,15 +268,6 @@ public class MainActivity extends Activity {
             }
             selectedElementsText.append(String.format(Locale.US, "%s x %d, ", symbol, count));
             totalWeight += elementWeights.get(symbol) * count;
-
-            // Set background color of SELECTED buttons
-            for (int i = 0; i < periodicTableGrid.getChildCount(); i++) {
-                View child = periodicTableGrid.getChildAt(i);
-                if (child instanceof Button && symbol.equals(child.getTag())) {
-                    child.setBackgroundColor(0xFFAAFFAA); // Light green for selected
-                }
-            }
-
         }
 
         formulaTextView.setText(Html.fromHtml(formula.toString(), Html.FROM_HTML_MODE_LEGACY));
@@ -264,7 +277,16 @@ public class MainActivity extends Activity {
 
      private void clearSelection() {
         selectedElements.clear(); // Clear the selection
+         selectedSymbol = null; //Also clear the selected symbol
         updateDisplay(); // Update the display (this will also reset button colors)
+
+         // Reset background color of ALL buttons
+        for (int i = 0; i < periodicTableGrid.getChildCount(); i++) {
+            View child = periodicTableGrid.getChildAt(i);
+            if (child instanceof Button) {
+                child.setBackgroundColor(0xFFFFFFFF); // Default (white or your theme's default)
+            }
+        }
     }
 
 }
